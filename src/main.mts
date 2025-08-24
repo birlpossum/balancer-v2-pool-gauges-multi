@@ -274,7 +274,7 @@ function transformGaugesToTags(
       "Contract Address": `eip155:${chainId}:${g.id}`,
       "Public Name Tag": publicNameTag,
       "Project Name": "Balancer",
-      "UI/Website Link": "https://app.balancer.fi",
+      "UI/Website Link": "https://balancer.fi",
       "Public Note": publicNote,
     });
   }
