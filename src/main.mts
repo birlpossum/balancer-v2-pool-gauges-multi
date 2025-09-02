@@ -11,6 +11,7 @@ import { ContractTag, ITagService } from "atq-types";
 // - Base (chainId 8453)
 // - Arbitrum One (chainId 42161)
 // - Polygon zkEVM (chainId 1101)
+// - Sepolia (chainId 11155111)
 // Subgraphs sourced from official docs: https://docs-v2.balancer.fi/reference/subgraph/#v2-subgraphs
 // For each chain, set the correct deployment ID for both Gauges and v2 Pools subgraphs below.
 const SUBGRAPH_URLS: Record<string, { gauges: string; v2pools: string }> = {
@@ -19,6 +20,12 @@ const SUBGRAPH_URLS: Record<string, { gauges: string; v2pools: string }> = {
       "https://gateway.thegraph.com/api/[api-key]/deployments/id/QmNrMRgSeUUkQsvhE6ExBEPETZ6P2jiJL3SzXftNQcAEcW",
     v2pools:
       "https://gateway.thegraph.com/api/[api-key]/deployments/id/QmQ5TT2yYBZgoUxsat3bKmNe5Fr9LW9YAtDs8aeuc1BRhj",
+  },
+  "11155111": {
+    gauges:
+      "https://api.studio.thegraph.com/query/24660/balancer-gauges-sepolia/version/latest",
+    v2pools:
+      "https://api.studio.thegraph.com/query/24660/balancer-sepolia-v2/version/latest",
   },
   "1101": {
     gauges:
@@ -325,11 +332,11 @@ class TagService implements ITagService {
     const trimmedChainId = (chainId ?? "").trim();
     // Enforce decimal string format only
     if (!/^\d+$/.test(trimmedChainId)) {
-      throw new Error(`Unsupported Chain ID: ${originalChainId}. Only 1 (Ethereum), 10 (Optimism), 100 (Gnosis), 137 (Polygon), 43114 (Avalanche), 8453 (Base), 1101 (Polygon zkEVM), and 42161 (Arbitrum) are supported in this module.`);
+      throw new Error(`Unsupported Chain ID: ${originalChainId}. Only 1 (Ethereum), 10 (Optimism), 100 (Gnosis), 137 (Polygon), 43114 (Avalanche), 8453 (Base), 1101 (Polygon zkEVM), 42161 (Arbitrum), and 11155111 (Sepolia) are supported in this module.`);
     }
     const chainIdNum = Number(trimmedChainId);
-    if (!Number.isInteger(chainIdNum) || (chainIdNum !== 1 && chainIdNum !== 10 && chainIdNum !== 100 && chainIdNum !== 137 && chainIdNum !== 43114 && chainIdNum !== 8453 && chainIdNum !== 1101 && chainIdNum !== 42161)) {
-      throw new Error(`Unsupported Chain ID: ${originalChainId}. Only 1 (Ethereum), 10 (Optimism), 100 (Gnosis), 137 (Polygon), 43114 (Avalanche), 8453 (Base), 1101 (Polygon zkEVM), and 42161 (Arbitrum) are supported in this module.`);
+    if (!Number.isInteger(chainIdNum) || (chainIdNum !== 1 && chainIdNum !== 10 && chainIdNum !== 100 && chainIdNum !== 137 && chainIdNum !== 43114 && chainIdNum !== 8453 && chainIdNum !== 1101 && chainIdNum !== 42161 && chainIdNum !== 11155111)) {
+      throw new Error(`Unsupported Chain ID: ${originalChainId}. Only 1 (Ethereum), 10 (Optimism), 100 (Gnosis), 137 (Polygon), 43114 (Avalanche), 8453 (Base), 1101 (Polygon zkEVM), 42161 (Arbitrum), and 11155111 (Sepolia) are supported in this module.`);
     }
     if (!apiKey || apiKey.trim().length === 0) {
       throw new Error("Missing API key. A The Graph gateway API key is required.");
@@ -340,7 +347,7 @@ class TagService implements ITagService {
     const v2PoolsUrl = SUBGRAPH_URLS[chainKey]?.v2pools?.replace("[api-key]", encodeURIComponent(apiKey));
     if (!gaugesUrl || !v2PoolsUrl) {
       // Treat missing URLs as unsupported chain per policy
-      throw new Error(`Unsupported Chain ID: ${originalChainId}. Only 1 (Ethereum), 10 (Optimism), 100 (Gnosis), 137 (Polygon), 43114 (Avalanche), 8453 (Base), 1101 (Polygon zkEVM), and 42161 (Arbitrum) are supported in this module.`);
+      throw new Error(`Unsupported Chain ID: ${originalChainId}. Only 1 (Ethereum), 10 (Optimism), 100 (Gnosis), 137 (Polygon), 43114 (Avalanche), 8453 (Base), 1101 (Polygon zkEVM), 42161 (Arbitrum), and 11155111 (Sepolia) are supported in this module.`);
     }
 
     // Pin to a consistent snapshot across both subgraphs.
