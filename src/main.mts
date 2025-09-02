@@ -1,3 +1,4 @@
+// Policy Reference: Kleros ATQ Registry Guidelines Version 2.3.0
 import fetch from "node-fetch";
 import { ContractTag, ITagService } from "atq-types";
 
@@ -77,6 +78,10 @@ async function fetchIndexedBlockNumber(subgraphUrl: string): Promise<number> {
   }
 }
 
+// Policy note: Cursor-based pagination using 'id'. Balancer pools do not expose a single-field
+// unique AND strictly sequential cursor in the schema. The Graph does not support multi-field
+// orderBy for a composite cursor. Therefore, per policy's fallback, we use the unique 'id' field
+// with ascending order and id_gt for completeness.
 const GET_VAULTS_POOL_NAMES_QUERY = `
   query GetVaultsPools($lastId: ID) {
     pools(
@@ -102,6 +107,8 @@ function truncateString(text: string, maxLength: number) {
 }
 
 // v2 Pools name lookup by poolId (id)
+// Policy note: Same rationale as above — use 'id' for cursoring as a unique fallback; no single-field
+// unique+sequential alternative is available. We fetch at a pinned block height for determinism.
 const GET_V2_POOL_NAMES_BY_ID = `
   query GetPools($lastId: ID, $block: Int!) {
     pools(first: 1000, orderBy: id, orderDirection: asc, where: { id_gt: $lastId }, block: { number: $block }) {
@@ -154,6 +161,8 @@ interface Gauge {
 interface GaugesGraphQLData { liquidityGauges: Gauge[] }
 interface GaugesGraphQLResponse { data?: GaugesGraphQLData; errors?: { message: string }[] }
 
+// Policy note: Gauges subgraph also lacks a single-field unique+sequential cursor. We therefore
+// use 'id' with id_gt and ascending order per the policy's allowed fallback.
 const GET_GAUGES_QUERY = `
   query GetGauges($lastId: ID, $block: Int!) {
     liquidityGauges(
@@ -306,7 +315,10 @@ class TagService implements ITagService {
       throw new Error(`Unsupported Chain ID: ${originalChainId}. Only 10 (Optimism), 100 (Gnosis), 43114 (Avalanche), and 8453 (Base) are supported in this module.`);
     }
 
-    // Pin to a consistent snapshot across both subgraphs
+    // Pin to a consistent snapshot across both subgraphs.
+    // Policy: While not explicitly mandated, pinning avoids race conditions across paginated requests
+    // and between different subgraphs. We query each subgraph's _meta.block.number and use the min
+    // to ensure all data is visible at the chosen height.
     const gaugesBlock = await fetchIndexedBlockNumber(gaugesUrl);
     const v2PoolsBlock = await fetchIndexedBlockNumber(v2PoolsUrl);
     const blockNumber = Math.min(gaugesBlock, v2PoolsBlock);
