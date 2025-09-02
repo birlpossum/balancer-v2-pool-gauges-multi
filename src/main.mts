@@ -284,17 +284,27 @@ function transformGaugesToTags(
 // ---------- Main service ----------
 class TagService implements ITagService {
   returnTags = async (chainId: string, apiKey: string): Promise<ContractTag[]> => {
-    const chainIdNum = Number(chainId);
+    const originalChainId = chainId;
+    const trimmedChainId = (chainId ?? "").trim();
+    // Enforce decimal string format only
+    if (!/^\d+$/.test(trimmedChainId)) {
+      throw new Error(`Unsupported Chain ID: ${originalChainId}. Only 10 (Optimism), 100 (Gnosis), 43114 (Avalanche), and 8453 (Base) are supported in this module.`);
+    }
+    const chainIdNum = Number(trimmedChainId);
     if (!Number.isInteger(chainIdNum) || (chainIdNum !== 10 && chainIdNum !== 100 && chainIdNum !== 43114 && chainIdNum !== 8453)) {
-      throw new Error(`Unsupported Chain ID: ${chainId}. Only 10 (Optimism), 100 (Gnosis), 43114 (Avalanche), and 8453 (Base) are supported in this module.`);
+      throw new Error(`Unsupported Chain ID: ${originalChainId}. Only 10 (Optimism), 100 (Gnosis), 43114 (Avalanche), and 8453 (Base) are supported in this module.`);
     }
     if (!apiKey || apiKey.trim().length === 0) {
       throw new Error("Missing API key. A The Graph gateway API key is required.");
     }
 
-    const gaugesUrl = SUBGRAPH_URLS[chainId]?.gauges?.replace("[api-key]", encodeURIComponent(apiKey));
-    const v2PoolsUrl = SUBGRAPH_URLS[chainId]?.v2pools?.replace("[api-key]", encodeURIComponent(apiKey));
-    if (!gaugesUrl || !v2PoolsUrl) throw new Error("Missing subgraph URLs for the specified chain.");
+    const chainKey = String(chainIdNum);
+    const gaugesUrl = SUBGRAPH_URLS[chainKey]?.gauges?.replace("[api-key]", encodeURIComponent(apiKey));
+    const v2PoolsUrl = SUBGRAPH_URLS[chainKey]?.v2pools?.replace("[api-key]", encodeURIComponent(apiKey));
+    if (!gaugesUrl || !v2PoolsUrl) {
+      // Treat missing URLs as unsupported chain per policy
+      throw new Error(`Unsupported Chain ID: ${originalChainId}. Only 10 (Optimism), 100 (Gnosis), 43114 (Avalanche), and 8453 (Base) are supported in this module.`);
+    }
 
     // Pin to a consistent snapshot across both subgraphs
     const gaugesBlock = await fetchIndexedBlockNumber(gaugesUrl);
