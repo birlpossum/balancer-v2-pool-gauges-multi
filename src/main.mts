@@ -24,15 +24,15 @@ const SUBGRAPH_URLS: Record<string, { gauges: string; v2pools: string }> = {
   },
   "34443": {
     gauges:
-      "https://api.studio.thegraph.com/api/[api-key]/deployments/id/QmRmDxf7L6L1aYY9uv58PGRooB9cLLNkUTPME3n8fTCkWc",
+      "https://gateway.thegraph.com/api/[api-key]/deployments/id/QmRmDxf7L6L1aYY9uv58PGRooB9cLLNkUTPME3n8fTCkWc",
     v2pools:
-      "https://api.studio.thegraph.com/api/[api-key]/deployments/id/QmSV7RXmuSxNm7NyAVYPqbkB9rfPPRiL4ANgr7iTxuW8Vu",
+      "https://gateway.thegraph.com/api/[api-key]/deployments/id/QmSV7RXmuSxNm7NyAVYPqbkB9rfPPRiL4ANgr7iTxuW8Vu",
   },
   "11155111": {
     gauges:
-      "https://api.studio.thegraph.com/api/[api-key]/deployments/id/QmWZ2zNHK93m4f8SHvhjy2T5x3NxjfZe7z1rGQSwhXH75Q",
+      "https://gateway.thegraph.com/api/[api-key]/deployments/id/QmWZ2zNHK93m4f8SHvhjy2T5x3NxjfZe7z1rGQSwhXH75Q",
     v2pools:
-      "https://api.studio.thegraph.com/api/[api-key]/deployments/id/QmPa1RR8QNnrdR7paNAAf99TcfugmE25kBApBy3Deonz6SL",
+      "https://gateway.thegraph.com/api/[api-key]/deployments/id/QmPa1RR8QNnrdR7paNAAf99TcfugmE25kBApBy3Deonz6S",
   },
   "1101": {
     gauges:
