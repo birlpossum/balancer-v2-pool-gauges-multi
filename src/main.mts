@@ -24,15 +24,15 @@ const SUBGRAPH_URLS: Record<string, { gauges: string; v2pools: string }> = {
   },
   "34443": {
     gauges:
-      "https://api.studio.thegraph.com/query/75376/balancer-gauges-mode/version/latest",
+      "https://api.studio.thegraph.com/api/[api-key]/deployments/id/QmRmDxf7L6L1aYY9uv58PGRooB9cLLNkUTPME3n8fTCkWc",
     v2pools:
-      "https://api.studio.thegraph.com/query/75376/balancer-mode-v2/version/latest",
+      "https://api.studio.thegraph.com/api/[api-key]/deployments/id/QmSV7RXmuSxNm7NyAVYPqbkB9rfPPRiL4ANgr7iTxuW8Vu",
   },
   "11155111": {
     gauges:
-      "https://api.studio.thegraph.com/query/24660/balancer-gauges-sepolia/version/latest",
+      "https://api.studio.thegraph.com/api/[api-key]/deployments/id/QmWZ2zNHK93m4f8SHvhjy2T5x3NxjfZe7z1rGQSwhXH75Q",
     v2pools:
-      "https://api.studio.thegraph.com/query/24660/balancer-sepolia-v2/version/latest",
+      "https://api.studio.thegraph.com/api/[api-key]/deployments/id/QmPa1RR8QNnrdR7paNAAf99TcfugmE25kBApBy3Deonz6SL",
   },
   "1101": {
     gauges:
